@@ -30,7 +30,7 @@ def main_menu():
 			EnterOrder()
 			main_menu()
 		elif choice == "4":
-			ImportMenu()
+			ImportMenu(2)
 			main_menu()
 		elif choice == "5":
 			SaveMenu()
@@ -107,21 +107,29 @@ def EnterOrder():
 	print "Total cost: ", TotalPrice
 	print "*" * 20
 		
-def ImportMenu():
+def ImportMenu(mode):
 	#uses csv functions to import the file; divides the row using the comma
 	#delimiter and makes a list. Then, adds the items of the list as item/price
 	#to the items menu
-	print "We're going to use the %r file. Okay?" % FILEPATH
-	choice = raw_input(">> ")
-	if choice == "yes":
+	
+	choice = ""
+	
+	#only display the prompt if mode = 2
+	if mode == 2:
+		print "We're importing the file %r. Okay?" % FILEPATH
+		choice = raw_input(">> ")
+	
+	#if mode = 1, it should automatically do the import
+	if choice == "yes" or mode == 1:
 		with open(FILEPATH, 'rb') as csvfile:
 			importmenu = csv.reader(csvfile, delimiter=',')
 			for row in importmenu:
 				menuitem = ' '.join(row)
 				menuitem = menuitem.split()
-				items[menuitem[0]] = menuitem[1]
+				items[menuitem[0]] = float(menuitem[1]) #need to make price a float so it can calculate price
+	else:
+		print "No file imported."
 	
-
 def SaveMenu():
 	print "Are you sure?"
 	choice = raw_input(">> ")
@@ -137,6 +145,10 @@ def SaveMenu():
 				savedmenu.writerow([food] + [price])
 		
 		
+#we import the saved menu to start the program so we don't need to start from scratch
+#the one parameter tells the function to not display the prompt
+ImportMenu(1)
+
 #get it started!
 main_menu()
 
